@@ -8,5 +8,7 @@ router.register(r'company', views.CompanyViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('signup/', views.SignUp.as_view(), name='signup'),
+    path('login/', views.Login.as_view(), name='login')
 ]

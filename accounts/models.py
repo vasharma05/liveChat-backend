@@ -9,6 +9,7 @@ class CompanyDetail(models.Model):
     company_address = models.CharField(max_length=256)
     company_city = models.CharField(max_length=256)
     company_state = models.CharField(max_length=256)
+    profile_pic = models.ImageField(default='', upload_to='profile_pic/')
 
     def __str__(self):
         return self.company_name
