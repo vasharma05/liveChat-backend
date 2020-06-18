@@ -20,5 +20,24 @@ class chatbotView(APIView):
             message = {}
             message['detail'] = 'No chatbot details found'
             return Response(message)
-
-    # def post    
+    
+    def post(self, request, format=None):
+        try: 
+            chat = chatbot.objects.get(user = request.user)
+            data = dict(**request.data, **request.FILES)
+            serializer = chatbotSerializer(chat, data=request.data)
+            if(serializer.is_valid()):
+                serializer.save(user = request.user)
+            else:
+                print('hello')
+                print(serializer.errors)
+                return Response(serializer.errors)
+        except: 
+            serializer = chatbotSerializer(data=request.data)
+            if(serializer.is_valid()):
+                serializer.save(user = request.user)
+            else:
+                print(serializer.errors)
+                return Response(serializer.errors)
+        return Response({'detail': 'success'}, status = 200)
+        # chatbot.save()
