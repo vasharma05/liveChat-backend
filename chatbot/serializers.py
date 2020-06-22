@@ -4,7 +4,9 @@ from accounts.serializers import UserSerializer
 from django.contrib.auth.models import User
 
 class chatbotSerializer(serializers.ModelSerializer):
-    user = UserSerializer
+    # user = UserSerializer()
+    bot_picture = serializers.ImageField(required=False)    
     class Meta:
         model = chatbot
-        fields = ['chatbotName','headerBackgroundColor','headerTextColor','introductionText','introductionBackgroundColor','introductionTextColor' , 'receiverBackground','senderBackground', 'receiverTextColor','senderTextColor']
+        # fields = '__all__'
+        exclude = ['user']

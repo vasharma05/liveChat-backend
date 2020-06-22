@@ -9,6 +9,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer()
+    profile_pic = serializers.ImageField(required=False)
     class Meta:
         model = CompanyDetail
-        fields = ['user','company_name', 'company_email', 'profile_pic', 'company_address']
+        fields = ['user', 'company_name', 'company_email', 'profile_pic', 'company_address']

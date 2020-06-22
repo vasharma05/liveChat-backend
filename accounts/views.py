@@ -39,7 +39,7 @@ class Login(APIView):
             message = {}
             token = Token.objects.get_or_create(user = user)
             message['token'] = token[0].key
-            message['userDetails'] = CompanySerializer(user.companydetail).data
+            message['userDetails'] = CompanySerializer(user.companydetail,  context={'request': request}).data
             return Response(message, status = 200)
 
         
@@ -57,12 +57,12 @@ class SignUp(APIView):
             return Response(data, status = 203)
 
         token = Token.objects.create(user=user)
-
         company = CompanySerializer(CompanyDetail.objects.create(
             user = user,
             company_name = request.data['companyName'],
             company_email = request.data['companyEmail'],
             company_address = request.data['companyAddress'],
+            profile_pic = request.data['profile_pic']
         ))
         data = dict({
             'message': 'success',

@@ -14,8 +14,8 @@ class chatbot(models.Model):
     senderBackground= models.CharField(max_length=256)
     receiverTextColor= models.CharField(max_length=256)
     senderTextColor= models.CharField(max_length=256)
-    bot_picture = models.FileField(upload_to='bots/')
-    background_picture = models.FileField(upload_to='background_images/')
+    bot_picture = models.ImageField(upload_to='bots/')
+    background_color = models.CharField(max_length=256)
     inputBarBackground= models.CharField(max_length=256)
     inputTextColor= models.CharField(max_length=256)
 

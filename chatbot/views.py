@@ -11,7 +11,7 @@ class chatbotView(APIView):
     def get(self, request, format=None):
         try:
             chat = chatbot.objects.get(user = request.user)
-            serialized_chat = chatbotSerializer(chat)
+            serialized_chat = chatbotSerializer(chat, context={'request': request})
             message = {}
             message['detail'] = 'success'
             message['chatbot_details'] = serialized_chat.data
@@ -24,12 +24,10 @@ class chatbotView(APIView):
     def post(self, request, format=None):
         try: 
             chat = chatbot.objects.get(user = request.user)
-            data = dict(**request.data, **request.FILES)
             serializer = chatbotSerializer(chat, data=request.data)
             if(serializer.is_valid()):
                 serializer.save(user = request.user)
             else:
-                print('hello')
                 print(serializer.errors)
                 return Response(serializer.errors)
         except: 
@@ -37,7 +35,15 @@ class chatbotView(APIView):
             if(serializer.is_valid()):
                 serializer.save(user = request.user)
             else:
-                print(serializer.errors)
+                # print(serializer.errors)
                 return Response(serializer.errors)
         return Response({'detail': 'success'}, status = 200)
         # chatbot.save()
+
+def index(request):
+    return render(request, 'chatbot/index.html', {})
+
+def room(request, room_name):
+    return render(request, 'chatbot/room.html', {
+        'room_name': room_name
+    })
