@@ -14,7 +14,7 @@ Shell or Terminal
 This will run the server at 127.0.0.1:8000 or localhost
 
 * On the front page you will see an error page
-* On /accounts/api/users You will see a list of all the users
-* On /accounts/api/company You will see a list of all the company details along with the user details
-* On /accounts/login This is the page where you request to check the login credentials
-* On /accounts/signup This is the page where we send the details to signup a new user
+* On /accounts/api/login This is the page where you request to check the login credentials
+* On /accounts/api/signup This is the page where we send the details to signup a new user
+* On /chatbot/api On GET Request, it sends a the chatbot details of the particular user.
+* On /chatbot/api on POST Request, it creates or modifies the chatbot details of the user.
