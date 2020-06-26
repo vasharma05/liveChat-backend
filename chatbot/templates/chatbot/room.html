@@ -12,11 +12,19 @@
     {{ room_name|json_script:"room-name" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
+        const ws = new WebSocket(
+            'ws://127.0.0.1/ws/room/vineet'
+        )
+        ws.onopen = ()=>{
+            ws.send(JSON.stringify({
+                command: 'room',
+                consumer: roomName
+            }))
+        }
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/chat/vineet/Check'
+            + '/ws/chat/vineet/neet1'
         );
 
         chatSocket.onmessage = function(e) {
@@ -41,8 +49,8 @@
             chatSocket.send(JSON.stringify({
                 command: 'new_message',
                 'message': {
-                    author:"Check",
-                    content: 'message'
+                    author:"neet1",
+                    content: message
                 }
             }));
             messageInputDom.value = '';

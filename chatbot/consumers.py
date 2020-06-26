@@ -18,7 +18,10 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.user = User.objects.get(username=self.username)
-        self.room = Room.objects.get(user=self.user, consumer = self.consumer)
+        try: 
+            self.room = Room.objects.get(user=self.user, consumer = self.consumer)
+        except:
+            self.room = Room.objects.create(user = self.user, consumer = self.consumer)
         self.accept()
 
     def disconnect(self, close_code):
@@ -40,7 +43,6 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def new_message(self, data):
-        print(self.room)
         message = MessageSerializer(data = data['message'])
         if message.is_valid():
             message.save(room = self.room)
@@ -50,6 +52,13 @@ class ChatConsumer(WebsocketConsumer):
             'command': 'new_message',
             'message': message.data
         }
+        if(len(self.room.messages.all()) == 1):
+            new_room = RoomConsumer(self.room)
+            data = {
+                'command': 'new_room',
+                'room': RoomSerializer(self.room) 
+            }
+            new_room.send(text_data = json.dumps(data))
         self.send_chat_message(response)
 
 
@@ -96,10 +105,14 @@ class RoomConsumer(WebsocketConsumer):
         )
 
         self.accept()
-        user = User.objects.get(username=self.username)
-        rooms = user.rooms.all()
+        self.user = User.objects.get(username=self.username)
+        rooms = self.user.rooms.all()
         serialized_data = RoomSerializer(rooms, many=True)
-        js = json.dumps(serialized_data.data)
+        data = {
+            'command': 'rooms',
+            'rooms': serialized_data.data
+        }
+        js = json.dumps(data)
         self.send(text_data = js)
 
     def disconnect(self, close_code):
@@ -111,8 +124,11 @@ class RoomConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        data = json.loads(text_data)
+        # if(data['command'] == 'room'):
+        #     if(not Room.objects.get(user = self.user, consumer=data['consumer'])):
+        #         Room.objects.create(user = self.user, consumer=data['consumer'])
+        message = data['message']
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
