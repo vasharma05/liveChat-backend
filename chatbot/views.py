@@ -43,7 +43,8 @@ class chatbotView(APIView):
 def index(request):
     return render(request, 'chatbot/index.html', {})
 
-def room(request, room_name):
+def room(request,username, room_name):
     return render(request, 'chatbot/room.html', {
-        'room_name': room_name
+        'room_name': room_name,
+        'username': username
     })

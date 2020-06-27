@@ -58,11 +58,11 @@ class SignUp(APIView):
 
         token = Token.objects.create(user=user)
         company = CompanySerializer(CompanyDetail.objects.create(
-            user = user,
-            company_name = request.data['companyName'],
-            company_email = request.data['companyEmail'],
-            company_address = request.data['companyAddress'],
-            profile_pic = request.data['profile_pic']
+            user = user
+            # company_name = request.data['companyName'],
+            # company_email = request.data['companyEmail'],
+            # company_address = request.data['companyAddress'],
+            # profile_pic = request.data['profile_pic']
         ))
         data = dict({
             'message': 'success',

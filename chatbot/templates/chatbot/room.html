@@ -10,30 +10,48 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:"room-name" }}
+    {{ username|json_script:"username" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const username = JSON.parse(document.getElementById('username').textContent);
+        console.log(roomName)
         const ws = new WebSocket(
-            'ws://127.0.0.1/ws/room/vineet'
+            'ws://127.0.0.1:8000/ws/room/' + username
         )
         ws.onopen = ()=>{
+            console.log('main connected')
             ws.send(JSON.stringify({
                 command: 'room',
                 consumer: roomName
             }))
+            console.log('sent')
         }
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/vineet/neet1'
-        );
-
-        chatSocket.onmessage = function(e) {
+        ws.onclose = ()=>{
+            console.log('main disconnected')
+        }
+        var chatSocket = null;
+        ws.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message.content + '\n');
-        };
+            console.log(data)
+            if(data.command === 'new_room' || data.command === 'room_exists'){
+                chatSocket = new WebSocket(
+                    'ws://'
+                    + window.location.host
+                    + '/ws/chat/'+ username + '/'+ roomName
+                );
+                chatSocket.onopen = ()=>{
+                    console.log('connected')
+                }
+                chatSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    document.querySelector('#chat-log').value += (data.message.content + '\n');
+                };
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+                chatSocket.onclose = function(e) {
+                    console.error('Chat socket closed unexpectedly');
+                };      
+            }
+            // document.querySelector('#chat-log').value += (data.message.content + '\n');
         };
 
         document.querySelector('#chat-message-input').focus();
@@ -46,13 +64,15 @@
         document.querySelector('#chat-message-submit').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                command: 'new_message',
-                'message': {
-                    author:"neet1",
-                    content: message
-                }
-            }));
+            if(chatSocket){
+                chatSocket.send(JSON.stringify({
+                    command: 'new_message',
+                    'message': {
+                        author:roomName,
+                        content: message
+                    }
+                }));
+            }
             messageInputDom.value = '';
         };
     </script>
