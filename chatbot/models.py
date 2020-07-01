@@ -35,8 +35,10 @@ class Room(models.Model):
 
 class Message(models.Model):
     author = models.CharField(max_length=256, unique = False)
+    type = models.CharField(max_length=64, default = 'text')
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+    file = models.FileField(upload_to='messages/', default = '')
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages')
 
     class Meta:

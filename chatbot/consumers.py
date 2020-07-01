@@ -43,16 +43,21 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def new_message(self, data):
-        message = MessageSerializer(data = data['message'])
-        if message.is_valid():
-            message.save(room = self.room)
+        print(self)
+        print(self.scope)
+        if 'id' in data['message']:
+            self.send_chat_message(data)
         else:
-            print(message.errors)
-        response = {
-            'command': 'new_message',
-            'message': message.data
-        }
-        self.send_chat_message(response)
+            message = MessageSerializer(data = data['message'])
+            if message.is_valid():
+                message.save(room = self.room)
+            else:
+                print(message.errors)
+            response = {
+                'command': 'new_message',
+                'message': message.data
+            }
+            self.send_chat_message(response)
 
 
 

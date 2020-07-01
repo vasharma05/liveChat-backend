@@ -12,6 +12,7 @@ class chatbotSerializer(serializers.ModelSerializer):
         exclude = ['user']
 
 class MessageSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(required=False, use_url = True)
     room = serializers.StringRelatedField()
     class Meta:
         model = Message

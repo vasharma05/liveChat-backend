@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView 
 from rest_framework import permissions
 from rest_framework.response import Response
-from .models import chatbot
-from .serializers import chatbotSerializer
+from .models import chatbot, Message, Room
+from .serializers import chatbotSerializer, MessageSerializer
+from django.contrib.auth.models import User
 
 # Create your views here.
 class chatbotView(APIView):
@@ -48,3 +49,16 @@ def room(request,username, room_name):
         'room_name': room_name,
         'username': username
     })
+
+class MessageFileView(APIView):
+    def post(self, request, format=None):
+        serialized_message = MessageSerializer(data = request.data)
+        if serialized_message.is_valid():
+            user = User.objects.get(username = request.data['room'].split()[0])
+            room = Room.objects.get(user = user, consumer = request.data['room'].split()[1])
+            serialized_message.save(room = room)
+        else:
+            return Response(serialized_message.errors, status=400)
+        id = serialized_message.data['id']
+        data = MessageSerializer(Message.objects.get(id=id))
+        return Response(data.data, status = 200)
