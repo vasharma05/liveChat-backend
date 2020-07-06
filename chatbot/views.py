@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView 
 from rest_framework import permissions
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import chatbot, Message, Room
 from .serializers import chatbotSerializer, MessageSerializer
@@ -37,7 +38,7 @@ class chatbotView(APIView):
                 serializer.save(user = request.user)
             else:
                 # print(serializer.errors)
-                return Response(serializer.errors)
+                return Response({'detail':serializer.errors}, status=200)
         return Response({'detail': 'success'}, status = 200)
         # chatbot.save()
 
@@ -62,3 +63,39 @@ class MessageFileView(APIView):
         id = serialized_message.data['id']
         data = MessageSerializer(Message.objects.get(id=id))
         return Response(data.data, status = 200)
+
+class ConsumerEmailView(APIView):
+    def post(self, request, format=None):
+        try:
+            user = User.objects.get(username=request.data['user'])
+            ind = request.data['email'].find('@')
+            consumer = request.data['email'][:ind]
+            try:
+                r = Room.objects.get(user=user, consumer=consumer)
+            except:
+                r = Room.objects.create(user=user, consumer=consumer, consumer_email=request.data['email'])
+            data = {
+                'message':'success',
+                'consumer': consumer
+            }
+            return Response(data, status= 200)
+        except:
+            return Response({'message':'Something went wrong'}, status = 203)
+
+@api_view(['POST'])
+def getChatBotDetails(request,format=None):
+    print(request.data)
+    try:
+        username = request.data['username']
+        user = User.objects.get(username=username)
+    except:
+        return Response({'detail':'Incorrect Username'}, status=200)
+    try:
+        serialized_data = chatbotSerializer(chatbot.objects.get(user=user), context={'request':request})
+        message = dict()
+        message['detail']='success'
+        message['chatbot'] = serialized_data.data
+        return Response(message,  status=200)
+    except:
+        return Response({'detail':'No chatbot details found'}, status=200)
+    

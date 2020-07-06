@@ -1,0 +1,28 @@
+#chatContainer{
+    position: fixed;
+    bottom: 50px;
+    right: 25px;
+}
+#chatIconContainer{
+    margin-top: 24px;
+    margin-left: auto;
+    width: 75px;
+    height: 75px;
+    background-color: #2962ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+#chatIconContainer object{
+    width:40px;
+    height: 40px;
+    cursor: pointer;
+}
+.relative{
+    position: relative;
+}
+iframe{
+    display: none;
+}

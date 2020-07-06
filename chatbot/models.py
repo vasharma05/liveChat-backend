@@ -25,6 +25,7 @@ class chatbot(models.Model):
 class Room(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rooms')
     consumer = models.CharField(max_length=64)
+    consumer_email = models.EmailField(default='')
 
     class Meta:
         unique_together = ['user', 'consumer']

@@ -43,8 +43,6 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def new_message(self, data):
-        print(self)
-        print(self.scope)
         if 'id' in data['message']:
             self.send_chat_message(data)
         else:
@@ -115,6 +113,8 @@ class RoomConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         data = json.loads(text_data)
+        print(self.user)
+        print(data)
         if data['command'] == 'room':
             try:
                 room = Room.objects.get(user=self.user, consumer=data['consumer'])
@@ -125,7 +125,7 @@ class RoomConsumer(WebsocketConsumer):
             except:
                 # Room deosnot exist
                 print(data)
-                self.room = Room.objects.create(user=self.user, consumer=data['consumer'])
+                self.room = Room.objects.create(user=self.user, consumer=data['consumer'], consumer_email=data['email'])
                 serialized_data = RoomSerializer(self.room)
                 response = {
                     'command': 'new_room',
