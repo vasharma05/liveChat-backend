@@ -23,6 +23,30 @@
 .relative{
     position: relative;
 }
-iframe{
+#iframe{
     display: none;
+    border-radius: 8px;
+    width: 400px;
+    height: 600px;
+    border:0;
+    box-shadow: 0 0 16px 0 #00000040;
+}
+
+@media only screen and (max-width: 450px){
+    #chatContainer{
+        bottom: 0;
+        right: 0;
+    }
+    #iframe{
+        width: 100vw;
+        max-height: 100%;
+    }
+    #chatIconContainer object{
+        width: 10px;
+        height: 10px;
+    }
+    #chatIconContainer{
+        width: 45px;
+        height: 45px;
+    }
 }

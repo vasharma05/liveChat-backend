@@ -3,8 +3,7 @@ var chatContainer = document.createElement('div')
 chatContainer.id = 'chatContainer'
 var iframe = document.createElement('iframe')
 iframe.src = `http://localhost:3000/consumer/${user}/`
-iframe.height = '750px'
-iframe.width = '500px'
+iframe.id='iframe'
 chatContainer.appendChild(iframe)
 var chatIconContainer = document.createElement('div')
 chatIconContainer.id = 'chatIconContainer'
