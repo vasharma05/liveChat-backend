@@ -5,6 +5,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 #serializers
 from .serializers import UserSerializer, CompanySerializer
 # models
@@ -70,3 +71,16 @@ class SignUp(APIView):
             'userDetails' : company.data
             })
         return Response(data, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def changePassword(request, format=None):
+    try:
+        try:
+            user = User.objects.get(username=request.data['username'])
+            user.set_password(request.data['password'])
+            user.save
+            return Response({'detail': 'success'}, status=200)
+        except:
+            return Response({'detail':'Incorrect username'}, status=200)
+    except:
+        return Response({'detail':'Something went wrong'}, status=500)
